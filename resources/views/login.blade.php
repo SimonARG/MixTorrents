@@ -1,8 +1,8 @@
 <x-layout>
     <div class="content-container">
-        <div class="content-panel auth-container">
+        <div class="content-panel auth-container flec-c f-just-cent f-al-cent">
             <h1 class="page-title">Log into your account</h1>
-            <form method="POST" action="{{ route('users.authenticate') }}">
+            <form class="flex-c f-al-cent" method="POST" action="{{ route('users.authenticate') }}">
                 @csrf
                 <label for="username"><h3>Username</h3></label>
                 <input type="text" name="name" id="name" required

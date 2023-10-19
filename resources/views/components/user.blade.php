@@ -1,12 +1,8 @@
 <div class="user-drop">
-    <button class="user-btn">
+    <button class="user-btn flex-v f-al-cent">
+        <span class="user-icon">👤︎</span>
         @auth
-            <span class="user-icon">👤︎</span>
-        @else
-            <span class="user-icon">👤︎</span>
-        @endauth
-        @auth
-            <span class="user-name">{{auth()->user()->name}}</span>
+            <span class="user-name">{{ auth()->user()->name }}</span>
         @else
             <span class="user-name">Anonymous</span>
         @endauth
@@ -14,15 +10,17 @@
     </button>
     <div id="user-dropdown" class="user-dropdown">
         @auth
+            <span>👤︎ Logged in as {{ Auth::user()->name }}</span>
+            <hr>
             <form method="GET" action="{{ route('uploads.search') }}">
                 <input type="hidden" name="field" value="user_id">
                 <input type="hidden" name="search" value="{{ Auth::user()->id }}">
-                <button><span>🡹</span> Uploads</span></button>
+                <button>🡹 Uploads</span></button>
             </form>
-            <a href="{{ route('users.profile') }}"><span>⛭</span> Profile</a>
+            <a href="{{ route('users.profile') }}">⛭ Profile</a>
             <form method="POST" action="{{ route('users.logout') }}">
                 @csrf
-                <button><span>✖</span> Logout</button>
+                <button>✖ Logout</button>
             </form>
         @else
             <a href="{{ route('users.login') }}"><span>➥</span> Login</a>

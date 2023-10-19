@@ -101,7 +101,6 @@ class UserController extends Controller
             'about'=> ['string', 'max:10000', 'nullable'],
             'avatar' => [File::types(['jpeg', 'jpg', 'png', 'webp', 'gif', 'avif']), 'nullable'],
             'new-password' => ['confirmed', Password::defaults(), 'nullable'],
-            'password' => [Password::defaults()]
         ]);
 
         $login = [];

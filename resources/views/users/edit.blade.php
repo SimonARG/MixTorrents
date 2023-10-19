@@ -6,9 +6,9 @@
                 @csrf
                 @method('PATCH')
 
-                <div class="user-edit-master">
-                    <div class="user-edit-1">
-                        <div class="user-edit-2">
+                <div class="flex-c">
+                    <div class="user-edit-1 flex-v">
+                        <div class="user-edit-2 flex-c f-al-strt">
                             <label class="descriptor" for="name">Username</h3></label>
                             <span class="subtitle">Unique username, at least 6 characters</span>
                             <input type="text" name="name" id="name"
@@ -82,7 +82,7 @@
                             @endif>
                         </div>
 
-                        <div class="user-edit-3">
+                        <div class="user-edit-3 flex-c f-al-cent">
                             <div class="img-container">
                                 <img src="{{url('storage/avatars/'.Auth::user()->pic)}}" alt="Avatar">
                             </div>

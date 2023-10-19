@@ -1,8 +1,8 @@
 <x-layout>
     <div class="content-container">
-        <div class="content-panel auth-container">
+        <div class="content-panel auth-container flec-c f-just-cent f-al-cent">
             <h1 class="page-title">Register an account</h1>
-            <form method="POST" action="{{ route('users.store') }}">
+            <form class="flex-c f-al-cent" method="POST" action="{{ route('users.store') }}">
                 @csrf
                 <label for="username"><h3>Username</h3></label>
                 <span>Unique username, at least 6 characters</span>

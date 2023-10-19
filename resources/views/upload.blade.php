@@ -9,9 +9,9 @@
 
                 <br>
 
-                <div class="form-container">
+                <div class="form-container flex-c">
                     <label class="descriptor" for="torrent_file">Torrent file</label>
-                    <div class="file-container">
+                    <div class="file-container flex-v">
                         <label class="in-btn upload-btn" for="torrent_file">Browse...</label>
                         <input type="text" readonly 
                         @if ($errors->first('torrent_file'))
@@ -25,9 +25,9 @@
                     </div>
                 </div>
 
-                <div class="info-container--flex">
+                <div class="flex-v f-just-bet">
 
-                    <div class="info">
+                    <div class="info flex-c">
                         <label class="descriptor" for="name">Torrent display name (optional)</label>
                         <input id="display_name" name="name" type="text"
                         @if ($errors->first('name'))
@@ -88,7 +88,7 @@
                     Description (optional) (<a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" class="small" target="_blank">Markdown supported</a>)
                 </label>
 
-                <ul class="editor-tabs">
+                <ul class="editor-tabs flex-v">
                     <li class="input-tab tab-active">
                         <a href="#description">
                             <span>Write</span>

@@ -2,16 +2,18 @@
     <div class="content-container">
         <div class="single-panel panel--default comment-panel comment-panel--edit">
             <h1 class="page-title">Edit your comment</h1>
-            <form method="POST" action="{{ route('comments.update', $comment->id) }}">
+            <form class="flex-c f-just-cent" method="POST" action="{{ route('comments.update', $comment->id) }}">
                 @csrf
                 @method('PATCH')
 
-                <div class="panel-body">
-                    <div class="user-col">
+                <div class="panel-body flex-v">
+                    <div class="user-col flex-c f-al-cent">
                         <span>
                             <a href="{{ route('users.show', $comment->user) }}" title="user">{{ $comment->user->name }}</a>
                         </span>
-                        <img class="avatar" src="{{url('storage/avatars/'.$comment->user->pic)}}" alt="">
+                        <div class="img-container">
+                            <img class="avatar" src="{{url('storage/avatars/'.$comment->user->pic)}}" alt="">
+                        </div>
                     </div>
 
                     <div class="comment-col">

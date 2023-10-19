@@ -2,12 +2,12 @@
     <div class="content-container">
         <div class="content-panel profile-container">
             <h1 class="page-title">Your profile</h1>
-            <div class="user-flex">
+            <div class="user flex-v">
                 <div>
                     <div class="img-container">
                         <img src="{{url('storage/avatars/'.Auth::user()->pic)}}" alt="Avatar">
                     </div>
-                    <div class="user-controls">
+                    <div class="user-controls flex-v">
                         <a href="{{ route('users.edit', Auth::user()) }}">EDIT</a>
                         <form id="acc-del" method="POST" action="{{ route('users.destroy', Auth::user()->id) }}">
                             @csrf
@@ -16,7 +16,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="user-info">
+                <div class="user-info flex-c f-just-cent">
                     <p><span>Username:</span>{{ Auth::user()->name }}</p>
                     <p><span>Created on:</span>{{ $strdate }}</p>
                     <p><span>User attributes:</span>

@@ -1,7 +1,7 @@
 @php
     function displayFiles($fileArray) {
-        foreach($fileArray as $key => $value){
-            if(str_contains(strval($key), '/')) {
+        foreach ($fileArray as $key => $value) {
+            if (str_contains(strval($key), '/')) {
                 echo "<li class=\"sub-folder inactive\"><a class=\"sub-folder-title\"><span class=\"file-icon\">🗀</span>".substr($key, 1)."</a><ul>";
                 displayFiles($fileArray[$key]);
                 echo "</ul></li>";
@@ -22,11 +22,11 @@
         @elseif ($upload->user->trust === 1)
         <div class="single-panel panel--trusted">
         @endif
-            <div class="panel-heading">
+            <div class="panel-heading flex-v f-just-bet f-al-cent">
                 {{ $upload->title ?? $upload->name ?? $upload->filename }}
                 @auth
                 @if (Auth::user()->id == $upload->user->id || Auth::user()->hasRole('admin'))
-                <div class="single-controls">
+                <div class="single-controls flex-v">
                     <form id="up-edit" method="GET" action="{{ route('uploads.edit', $upload->id) }}">
                         @csrf
                         <button class="del-btn" type="submit">EDIT</button>
@@ -41,80 +41,80 @@
                 @endauth
             </div>
             <div class="panel-body">
-                <div class="panel-flex-container">
-                    <div class="panel-flex panel-left">
-                        <div class="flex-row-1">
-                            <div class="flex-col single-title">
+                <div class="upload-info flex-v">
+                    <div class="flex-c panel-left">
+                        <div class="flex-v">
+                            <div class="flex-v single-title">
                                 <div class="single-cat">Category:</div>
                             </div>
-                            <div class="flex-col">
+                            <div class="flex-v">
                                 <div class="single-cat-val single-val">{{ $upload->category->category }}</div>
                             </div>
                         </div>
-                        <div class="flex-row-2">
-                            <div class="flex-col single-title">
+                        <div class="flex-v">
+                            <div class="flex-v single-title">
                                 <div class="single-uploader">Uploader:</div>
                             </div>
-                            <div class="flex-col">
+                            <div class="flex-v">
                                 <div class="single-uploader-val single-val"><a href="{{ route('users.show', $upload->user) }}">{{ $upload->user->name }}</a></div>
                             </div>
                         </div>
-                        <div class="flex-row-3">
-                            <div class="flex-col single-title">
+                        <div class="flex-v">
+                            <div class="flex-v single-title">
                                 <div class="single-info">Information:</div>
                             </div>
-                            <div class="flex-col">
+                            <div class="flex-v">
                                 <div class="single-info-val single-val">
                                     {{ $upload->info ?? $upload->comment }}
                                 </div>
                             </div>
                         </div>
-                        <div class="flex-row-4">
-                            <div class="flex-col single-title">
+                        <div class="flex-v">
+                            <div class="flex-v single-title">
                                 <div class="single-size">File Size:</div>
                             </div>
-                            <div class="flex-col">
+                            <div class="flex-v">
                                 <div class="single-size-val single-val">{{ $upload->size }}</div>
                             </div>
                         </div>
                     </div>
-                    <div class="panel-flex panel-right">
-                        <div class="flex-row-5">
-                            <div class="flex-col single-title">
+                    <div class="flex-c panel-right">
+                        <div class="flex-v">
+                            <div class="flex-v single-title">
                                 <div class="single-date">Date:</div>
                             </div>
-                            <div class="flex-col">
+                            <div class="flex-v">
                                 <div class="single-date-val single-val">{{ $strdate }}</div>
                             </div>
                         </div>
-                        <div class="flex-row-6">
-                            <div class="flex-col single-title">
+                        <div class="flex-v">
+                            <div class="flex-v single-title">
                                 <div class="single-seed">Seeders:</div>
                             </div>
-                            <div class="flex-col">
+                            <div class="flex-v">
                                 <div class="single-seed-val single-val">{{ $upload->seeders }}</div>
                             </div>
                         </div>
-                        <div class="flex-row-7">
-                            <div class="flex-col single-title">
+                        <div class="flex-v">
+                            <div class="flex-v single-title">
                                 <div class="single-leech">Leechers:</div>
                             </div>
-                            <div class="flex-col">
+                            <div class="flex-v">
                                 <div class="single-leech-val single-val">{{ $upload->leechers }}</div>
                             </div>
                         </div>
-                        <div class="flex-row-8">
-                            <div class="flex-col single-title">
+                        <div class="flex-v">
+                            <div class="flex-v single-title">
                                 <div class="single-down">Downloads:</div>
                             </div>
-                            <div class="flex-col">
+                            <div class="flex-v">
                                 <div class="single-down-val single-val">{{ $upload->downloads }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="panel-footer">
+            <div class="panel-footer flex-v f-al-cent f-just-bet">
                 <div>
                     <a href="{{ route('uploads.download', $upload->id) }}">🡇 Download torrent</a>
                     <span>or</span>
@@ -148,16 +148,18 @@
             <div class="panel-heading">
                 <a href="#">Comments ({{ $upload->comments->count() }})</a>
             </div>
-            <div class="comments--flex">
+            <div class="comments flex-c f-al-cent">
                 
                 @foreach ($upload->comments as $comment)
                 <div class="single-panel panel--default comment-panel" id="{{ 'comment-' . $loop->iteration }}">
-                    <div class="panel-body">
-                        <div class="user-col">
+                    <div class="panel-body flex-v">
+                        <div class="user-col flex-c f-al-cent">
                             <span>
                                 <a href="{{ route('users.show', $comment->user) }}" title="user">{{ $comment->user->name }}</a>
                             </span>
-                            <img class="avatar" src="{{url('storage/avatars/'.$comment->user->pic)}}" alt="">
+                            <div class="img-container">
+                                <img class="avatar" src="{{ url('storage/avatars/'.$comment->user->pic) }}" alt="">
+                            </div>
                         </div>
                         <div class="comment-col">
                             <div class="comment-details">
@@ -176,7 +178,7 @@
                         </div>
                         @auth
                         @if (Auth::user()->id == $upload->user->id || Auth::user()->hasRole('admin'))
-                        <div id="{{ 'comment-controls-' . $loop->iteration }}" class="comment-controls">
+                        <div id="{{ 'comment-controls-' . $loop->iteration }}" class="comment-controls flex-v f-al-cent">
                             <form id="comment-edit" method="GET" action="{{ route('comments.edit', $comment->id) }}">
                                 @csrf
                                 <input type="hidden" name="comment-num" value="{{ 'comment-' . $loop->iteration }}"/>
@@ -197,7 +199,7 @@
             </div>
             <form class="comment-box" method="POST" action="{{ route('comments.store') }}">
                 @csrf
-                <div class="comment-input">
+                <div class="flex-c">
                     <label class="comment-label" for="comment">Make a comment</label>
                     <textarea class="fillable comment" id="comment" name="comment" placeholder="Type your comment..." required></textarea>
                     <input type="hidden" name="upload_id" value="{{ $upload->id }}"/>
