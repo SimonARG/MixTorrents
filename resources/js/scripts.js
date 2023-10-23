@@ -19,6 +19,25 @@ window.addEventListener('click', function (event) {
     }
 });
 
+// Show the vertical user menu dropdown and highlight the button
+const userBtnV = document.querySelector(".user-btn--v");
+const userDropV = document.querySelector(".user-dropdown--v");
+
+userBtnV.addEventListener('click', function () {
+    userDropV.classList.toggle("drop-show");
+    userBtnV.classList.toggle("user-btn--active");
+});
+
+// Close the vertical user menu dropdown menu if the user clicks outside of it
+window.addEventListener('click', function (event) {
+    if (!event.target.closest('.user-drop--v')) {
+        if (userDropV.classList.contains('drop-show')) {
+            userDropV.classList.remove('drop-show');
+            userBtnV.classList.remove('user-btn--active');
+        }
+    }
+});
+
 // On page load, show and hide flash message
 const holder = document.querySelector(".flash-holder");
 
@@ -353,6 +372,15 @@ function closeAllSelect(elmnt) {
         }
     }
 }
+
+// Get hamburger button and topnav
+const ham = document.querySelector(".hamburger");
+const topnav = document.getElementById("topnav");
+
+// Toggle topnav responsive style on hamburger click
+ham.addEventListener("click", function() {
+    topnav.classList.toggle("responsive");
+});
 
 // If the user clicks anywhere outside the select box, then close all select boxes:
 document.addEventListener("click", closeAllSelect);
