@@ -6,8 +6,8 @@ use DateTime;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -46,14 +46,13 @@ class UserController extends Controller
 
         auth()->login($user);
 
-        return back()->with('message', 'Registration succesful, you are now logged in!');
+        return redirect(session('link'))->with('message', 'Registration succesful, you are now logged in!');
     }
 
     /**
      * Display the specified resource.
      */
     public function show(User $user) {
-        session(['link' => url()->previous()]);
         $date = new DateTime($user->created_at);
         $strdate = $date->format('Y/m/d H:i');
 
@@ -67,15 +66,16 @@ class UserController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id) {
-        if (Auth::check() && auth()->user()->id == $id || Auth::user()->hasRole('admin')) {
+        $user = User::find($id);
 
+        if (Gate::allows('messWith-user', $user)) {
             return view('users.edit', [
                 'id' => $id
             ]);
-        } else if (!Auth::check()) {
+        } else if (! Auth::check()) {
             return back()->with('message', 'You need to be logged in to edit your profile');
-        } else if (auth()->user()->id != $id) {
-            return back()->with('message', 'You can only edit your profile');
+        } else if (! Gate::allows('messWith-user', $user)) {
+            return back()->with('message', 'You can only edit your own profile');
         }
     }
 
@@ -84,6 +84,10 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id) {
         $user = User::find($id);
+
+        if (! Gate::allows('messWith-user', $user)) {
+            abort(403);
+        }
 
         $dbFields = [];
 
@@ -144,6 +148,12 @@ class UserController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $id) {
+        $user =  User::find($id);
+
+        if (! Gate::allows('messWith-user', $user)) {
+            abort(403);
+        }
+
         auth()->logout();
 
         session()->invalidate();
@@ -155,6 +165,7 @@ class UserController extends Controller
 
     public function login() {
         session(['link' => url()->previous()]);
+        
         return view('login');
     }
 
@@ -167,8 +178,7 @@ class UserController extends Controller
         if (Auth::attempt($formFields)) {
             $request->session()->regenerate();
 
-            return back()
-            ->with('message', 'You are now logged in');
+            return redirect(session('link'))->with('message', 'You are now logged in');
         }
 
         return back()->withErrors(['name' => 'Invalid credentials'])->onlyInput('name');
@@ -196,7 +206,6 @@ class UserController extends Controller
     }
 
     public function uploads(Request $request) {
-        session(['link' => url()->previous()]);
         $user = User::where($request->field, $request->name)->first();
  
         $uploads = $user->uploads()->paginate(20);

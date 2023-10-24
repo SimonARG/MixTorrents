@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DateTime;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Redirect;
 class CommentController extends Controller
 {
     public function store(Request $request) {
-        if (Auth::check()) {
+        if (Gate::allows('new-comment')) {
             $formFields = $request->validate([
                 'comment' => 'required',
             ]);
@@ -24,13 +25,19 @@ class CommentController extends Controller
             Comment::create($formFields);
     
             return Redirect::to(URL::previous() . '#comment-' . $anchor)->with('message', 'Comment posted!');
-        } else {
+        } else if (! Auth::check()) {
             return Redirect::to(URL::previous())->with('message', 'You need to be logged in to comment');
+        } else if (! Gate::allows('new-comment')) {
+            return Redirect::to(URL::previous())->with('message', 'Your account is restricted');
         }
     }
 
     public function edit(Request $request, string $id) {
         $comment = Comment::find($id);
+
+        if (! Gate::allows('messWith-comment', $comment)) {
+            abort(403);
+        }
 
         $comDate = new DateTime($comment->created_at);
         $comStrdate = $comDate->format('Y/m/d H:i');
@@ -61,7 +68,14 @@ class CommentController extends Controller
     }
 
     public function destroy(string $id) {
+        $comment = Comment::find($id);
+
+        if (! Gate::allows('messWith-comment', $comment)) {
+            abort(403);
+        }
+
         Comment::destroy($id);
+
         return back()->with('message', 'Comment deleted');
     }
 
@@ -71,6 +85,10 @@ class CommentController extends Controller
         ]);
 
         $comment = Comment::find($id);
+
+        if (! Gate::allows('messWith-comment', $comment)) {
+            abort(403);
+        }
 
         $upload = $comment->upload;
         

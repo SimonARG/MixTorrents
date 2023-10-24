@@ -6,19 +6,19 @@ require '../vendor/medariox/scrapeer/scraper.php';
 require '../vendor/bhutanio/torrent-bencode/src/Bhutanio/BEncode/BEncode.php';
 
 use DateTime;
+use App\Models\User;
 use App\Models\Subcat;
 use App\Models\Upload;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Storage;
 use GrahamCampbell\Markdown\Facades\Markdown;
-use Illuminate\Support\Facades\DB;
 
-class UploadController extends Controller
-{
+class UploadController extends Controller {
     /**
      * Display a listing of the resource.
      */
@@ -42,9 +42,18 @@ class UploadController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        return view('upload');
+    public function create() {
+        if (! Auth::check()) {
+            return back()->with('message', 'You need to be logged in to upload');
+        }
+
+        $user = User::find(Auth::user()->id);
+
+        if (Gate::allows('new-upload', $user)) {
+            return view('upload');
+        } else if (! Gate::allows('new-upload', $user)) {
+            return back()->with('message', 'Your account is restricted');
+        }
     }
 
     /**
@@ -350,6 +359,10 @@ class UploadController extends Controller
     public function edit(string $id) {
         $upload = Upload::find($id);
 
+        if (! Gate::allows('messWith-upload', $upload)) {
+            abort(403);
+        }
+
         // Get file
         $file = Storage::get('public/' . $upload['path']);
 
@@ -365,6 +378,10 @@ class UploadController extends Controller
      */
     public function update(Request $request, string $id) {
         $upload = Upload::find($id);
+
+        if (! Gate::allows('messWith-upload', $upload)) {
+            abort(403);
+        }
 
         // Get the file
         $upFile = Storage::get('public/' . $upload->path);

@@ -24,8 +24,7 @@
         @endif
             <div class="panel-heading flex-v f-just-bet f-al-cent">
                 {{ $upload->title ?? $upload->name ?? $upload->filename }}
-                @auth
-                @if (Auth::user()->id == $upload->user->id || Auth::user()->hasRole('admin'))
+                @can('messWith-upload', $upload)
                 <div class="single-controls flex-v">
                     <form id="up-edit" method="GET" action="{{ route('uploads.edit', $upload->id) }}">
                         @csrf
@@ -37,8 +36,7 @@
                         <button class="del-btn" type="submit">DELETE</button>
                     </form>
                 </div>
-                @endif
-                @endauth
+                @endcan
             </div>
             <div class="panel-body">
                 <div class="upload-info flex-v">
@@ -176,8 +174,7 @@
                                 <div>{!! $comment->comment !!}</div>
                             </div>
                         </div>
-                        @auth
-                        @if (Auth::user()->id == $upload->user->id || Auth::user()->hasRole('admin'))
+                        @can("messWith-comment", $comment)
                         <div id="{{ 'comment-controls-' . $loop->iteration }}" class="comment-controls flex-v f-al-cent">
                             <form id="comment-edit" method="GET" action="{{ route('comments.edit', $comment->id) }}">
                                 @csrf
@@ -190,8 +187,7 @@
                                 <button class="com-del-btn" type="submit">DELETE</button>
                             </form>
                         </div>
-                        @endif
-                        @endauth
+                        @endcan
                     </div>
                 </div>
                 @endforeach
