@@ -19,13 +19,13 @@
                     <div class="comment-col">
                         <div class="comment-details">
                             @if (!($comment->updated_at))
-                            <span>Created at: </span>
-                            <a href="#">{{ $comStrdate }}</a></div>
+                                <span>Created at: </span>
+                                <a href="#">{{ $comStrdate }}</a></div>
                             @elseif ($comment->updated_at)
                             <span>Created at: </span>
-                            <a href="#">{{ $comStrdate }}</a>
-                            <span> - Last updated at: </span>
-                            <a href="#">{{ $comUpStrdate }}</a></div>
+                                <a href="#">{{ $comStrdate }}</a>
+                                <span> - Last updated at: </span>
+                                <a href="#">{{ $comUpStrdate }}</a></div>
                             @endif
                         <div class="comment-body">
                             <textarea class="fillable comment" id="comment" name="comment" required>{{ $comment->comment }}</textarea>

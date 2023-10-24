@@ -111,8 +111,7 @@ class UploadController extends Controller {
             $magnet = 'magnet:?xt=urn:btih:' . $infohash . '&dn=' . $filename . '&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce';
 
             // Format total size
-            function formatBits($bits, $precision = 1)
-            {
+            function formatBits($bits, $precision = 1) {
                 $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
 
                 $bits = max($bits, 0);
@@ -162,11 +161,13 @@ class UploadController extends Controller {
      * Display the specified resource.
      */
     public function show(Upload $upload) {
-        if ($upload->comments->first()) {
-            if ($upload->description) {
-                $upload->description = Markdown::convert($upload->description)->getContent();
-            };
+        // Check for description field in DB and convert it to Markdown if it exists
+        if ($upload->description) {
+            $upload->description = Markdown::convert($upload->description)->getContent();
+        };
 
+        // Check for comments in DB and format their creation and update dates
+        if ($upload->comments->first()) {
             $comStrdates = [];
             foreach ($upload->comments as $key => $comment) {
                 $comment->comment = Markdown::convert($comment->comment)->getContent();
@@ -181,78 +182,83 @@ class UploadController extends Controller {
                     $comUpStrdates[$key] = [$comUpStrdate];
                 }
             }
+        }
 
-            $date = new DateTime($upload->created_at);
-            $strdate = $date->format('Y/m/d H:i');
+        // Get and format date
+        $date = new DateTime($upload->created_at);
+        $strdate = $date->format('Y/m/d H:i');
 
-            // Get file
-            $file = Storage::get('public/' . $upload['path']);
+        // Get file
+        $file = Storage::get('public/' . $upload['path']);
 
-            // Initialize torrent decoder
-            $bcoder = new BEncode;
+        // Initialize torrent decoder
+        $bcoder = new BEncode;
 
-            // Decode torrent file and get file list
-            $torrent = $bcoder->bdecode($file);
-            $fileList = $bcoder->filelist($torrent);
-            $files = $fileList['files'];
+        // Decode torrent file and get file list
+        $torrent = $bcoder->bdecode($file);
+        $fileList = $bcoder->filelist($torrent);
+        $files = $fileList['files'];
 
-            // Format total size
-            function formatBits($bits, $precision = 1)
-            {
-                $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
+        // Format total size
+        function formatBits($bits, $precision = 1) {
+            $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
 
-                $bits = max($bits, 0);
-                $pow = floor(($bits ? log($bits) : 0) / log(1024));
-                $pow = min($pow, count($units) - 1);
+            $bits = max($bits, 0);
+            $pow = floor(($bits ? log($bits) : 0) / log(1024));
+            $pow = min($pow, count($units) - 1);
 
-                $bits /= (1 << (10 * $pow));
+            $bits /= (1 << (10 * $pow));
 
-                return round($bits, $precision) . $units[$pow];
+            return round($bits, $precision) . $units[$pow];
+        }
+
+        // Make file list array
+        $fileArray = [];
+        foreach ($files as $file) {
+            if (str_contains($file['name'], '/')) {
+                $split = explode('/', $file['name']);
+                $name = last($split);
+                $path = array_chunk($split, sizeof($split) - 1)[0];
+            } else {
+                $name = $file['name'];
+                $path = [];
             }
-
-            $fileArray = [];
-            foreach ($files as $file) {
-                if (str_contains($file['name'], '/')) {
-                    $split = explode('/', $file['name']);
-                    $name = last($split);
-                    $path = array_chunk($split, sizeof($split) - 1)[0];
-                } else {
-                    $name = $file['name'];
-                    $path = [];
-                }
-                $temp = [['name' => $name, 'size' => formatBits($file['size'])]];
-                while (count($path) > 0) {
-                    $temp2 = [];
-                    $temp2['/' . last($path)] = $temp;
-                    array_pop($path);
-                    $temp3 = $temp2;
-                    $temp2 = $temp;
-                    $temp = $temp3;
-                }
-                $fileArray = array_merge_recursive($fileArray, $temp);
+            $temp = [['name' => $name, 'size' => formatBits($file['size'])]];
+            while (count($path) > 0) {
+                $temp2 = [];
+                $temp2['/' . last($path)] = $temp;
+                array_pop($path);
+                $temp3 = $temp2;
+                $temp2 = $temp;
+                $temp = $temp3;
             }
+            $fileArray = array_merge_recursive($fileArray, $temp);
+        }
 
-            function sortFileStructure(&$array)
-            {
-                $folders = [];
-                $files = [];
+        // Sort file list array
+        function sortFileStructure(&$array) {
+            $folders = [];
+            $files = [];
 
-                foreach ($array as $key => &$element) {
-                    if (is_array($element)) {
-                        if (isset($element['name'])) {
-                            $files[$key] = $element;
-                        } else {
-                            sortFileStructure($element);
-                            $folders[$key] = $element;
-                        }
+            foreach ($array as $key => &$element) {
+                if (is_array($element)) {
+                    if (isset($element['name'])) {
+                        $files[$key] = $element;
+                    } else {
+                        sortFileStructure($element);
+                        $folders[$key] = $element;
                     }
                 }
-                ksort($folders);
-                $array = $folders + $files;
             }
 
-            sortFileStructure($fileArray);
+            ksort($folders);
+            $array = $folders + $files;
+        }
 
+        sortFileStructure($fileArray);
+
+        // Return view depending on prescence of comments
+        if (isset($comStrdates)) {
             if (isset($comUpStrdates)) {
                 return view('single', [
                     'upload' => $upload,
@@ -270,81 +276,6 @@ class UploadController extends Controller {
                 ]);
             }
         } else {
-            if ($upload->description) {
-                $upload->description = Markdown::convert($upload->description)->getContent();
-            };
-
-            $date = new DateTime($upload->created_at);
-            $strdate = $date->format('Y/m/d H:i');
-
-            // Get file
-            $file = Storage::get('public/' . $upload['path']);
-
-            // Initialize torrent decoder
-            $bcoder = new BEncode;
-
-            // Decode torrent file and get file list
-            $torrent = $bcoder->bdecode($file);
-            $fileList = $bcoder->filelist($torrent);
-            $files = $fileList['files'];
-
-            // Format total size
-            function formatBits($bits, $precision = 1)
-            {
-                $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
-
-                $bits = max($bits, 0);
-                $pow = floor(($bits ? log($bits) : 0) / log(1024));
-                $pow = min($pow, count($units) - 1);
-
-                $bits /= (1 << (10 * $pow));
-
-                return round($bits, $precision) . $units[$pow];
-            }
-
-            $fileArray = [];
-            foreach ($files as $file) {
-                if (str_contains($file['name'], '/')) {
-                    $split = explode('/', $file['name']);
-                    $name = last($split);
-                    $path = array_chunk($split, sizeof($split) - 1)[0];
-                } else {
-                    $name = $file['name'];
-                    $path = [];
-                }
-                $temp = [['name' => $name, 'size' => formatBits($file['size'])]];
-                while (count($path) > 0) {
-                    $temp2 = [];
-                    $temp2['/' . last($path)] = $temp;
-                    array_pop($path);
-                    $temp3 = $temp2;
-                    $temp2 = $temp;
-                    $temp = $temp3;
-                }
-                $fileArray = array_merge_recursive($fileArray, $temp);
-            }
-
-            function sortFileStructure(&$array)
-            {
-                $folders = [];
-                $files = [];
-
-                foreach ($array as $key => &$element) {
-                    if (is_array($element)) {
-                        if (isset($element['name'])) {
-                            $files[$key] = $element;
-                        } else {
-                            sortFileStructure($element);
-                            $folders[$key] = $element;
-                        }
-                    }
-                }
-                ksort($folders);
-                $array = $folders + $files;
-            }
-
-            sortFileStructure($fileArray);
-
             return view('single', [
                 'upload' => $upload,
                 'strdate' => $strdate,
@@ -522,21 +453,21 @@ class UploadController extends Controller {
         if ($request->category == 0) {
             if ($request->filter == 0) {
                 $uploads = Upload::whereExists(function (Builder $query) {
-                                $query->where('name', 'like', '%' . request('search') . '%')
-                                    ->orWhere('title', 'like', '%' . request('search') . '%')
-                                    ->orWhere('filename', 'like', '%' . request('search') . '%');
-                            })
-                            ->latest()
-                            ->paginate(20);
+                    $query->where('name', 'like', '%' . request('search') . '%')
+                    ->orWhere('title', 'like', '%' . request('search') . '%')
+                    ->orWhere('filename', 'like', '%' . request('search') . '%');
+                })
+                ->latest()
+                ->paginate(20);
             } else if ($request->filter == 1) {
                 $uploads = Upload::whereRelation('user', 'trust', 1)
-                            ->whereExists(function (Builder $query) {
-                                $query->where('name', 'like', '%' . request('search') . '%')
-                                    ->orWhere('title', 'like', '%' . request('search') . '%')
-                                    ->orWhere('filename', 'like', '%' . request('search') . '%');
-                            })
-                            ->latest()
-                            ->paginate(20);
+                ->whereExists(function (Builder $query) {
+                    $query->where('name', 'like', '%' . request('search') . '%')
+                    ->orWhere('title', 'like', '%' . request('search') . '%')
+                    ->orWhere('filename', 'like', '%' . request('search') . '%');
+                })
+                ->latest()
+                ->paginate(20);
             }
         } else {
             $categoriesString = $request->category;

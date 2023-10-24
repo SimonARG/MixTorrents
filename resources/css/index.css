@@ -967,6 +967,7 @@ thead>tr>th:nth-child(6) {
 .sub-folder-title {
     font-weight: bold;
     cursor: pointer;
+    user-select: none;
 }
 
 .file-icon {

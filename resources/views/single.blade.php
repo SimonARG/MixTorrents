@@ -16,28 +16,29 @@
 <x-layout>
     <div class="content-container">
         @if ($upload->user->trust === null)
-       <div class="single-panel panel--default">
+            <div class="single-panel panel--default">
         @elseif ($upload->user->trust === 0)
-        <div class="single-panel panel--untrusted">
+            <div class="single-panel panel--untrusted">
         @elseif ($upload->user->trust === 1)
-        <div class="single-panel panel--trusted">
+            <div class="single-panel panel--trusted">
         @endif
             <div class="panel-heading flex-v f-just-bet f-al-cent">
                 {{ $upload->title ?? $upload->name ?? $upload->filename }}
                 @can('messWith-upload', $upload)
-                <div class="single-controls flex-v">
-                    <form id="up-edit" method="GET" action="{{ route('uploads.edit', $upload->id) }}">
-                        @csrf
-                        <button class="del-btn" type="submit">EDIT</button>
-                    </form>
-                    <form id="up-del" method="POST" action="{{ route('uploads.destroy', $upload) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button class="del-btn" type="submit">DELETE</button>
-                    </form>
-                </div>
+                    <div class="single-controls flex-v">
+                        <form id="up-edit" method="GET" action="{{ route('uploads.edit', $upload->id) }}">
+                            @csrf
+                            <button class="del-btn" type="submit">EDIT</button>
+                        </form>
+                        <form id="up-del" method="POST" action="{{ route('uploads.destroy', $upload) }}">
+                            @csrf
+                            @method('DELETE')
+                            <button class="del-btn" type="submit">DELETE</button>
+                        </form>
+                    </div>
                 @endcan
             </div>
+
             <div class="panel-body">
                 <div class="upload-info flex-v">
                     <div class="flex-c panel-left">
@@ -112,6 +113,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="panel-footer flex-v f-al-cent f-just-bet">
                 <div>
                     <a href="{{ route('uploads.download', $upload->id) }}">🡇 Download torrent</a>
@@ -123,9 +125,11 @@
             </div>
        </div>
 
-       <div class="single-panel panel--default">
-            <div class="panel-body">{!! $upload->description !!}</></div>
-       </div>
+       @if ($upload->description)
+        <div class="single-panel panel--default">
+                <div class="panel-body">{!! $upload->description !!}</></div>
+        </div>
+       @endif
 
        <div class="single-panel panel--default">
             <div class="panel-heading">File list</div>
@@ -146,53 +150,56 @@
             <div class="panel-heading">
                 <a href="#">Comments ({{ $upload->comments->count() }})</a>
             </div>
+
             <div class="comments flex-c f-al-cent">
-                
                 @foreach ($upload->comments as $comment)
-                <div class="single-panel panel--default comment-panel" id="{{ 'comment-' . $loop->iteration }}">
-                    <div class="panel-body flex-v">
-                        <div class="user-col flex-c f-al-cent">
-                            <span>
-                                <a href="{{ route('users.show', $comment->user) }}" title="user">{{ $comment->user->name }}</a>
-                            </span>
-                            <div class="img-container">
-                                <img class="avatar" src="{{ url('storage/avatars/'.$comment->user->pic) }}" alt="">
+                    <div class="single-panel panel--default comment-panel" id="{{ 'comment-' . $loop->iteration }}">
+                        <div class="panel-body flex-v">
+                            <div class="user-col flex-c f-al-cent">
+                                <span>
+                                    <a href="{{ route('users.show', $comment->user) }}" title="user">{{ $comment->user->name }}</a>
+                                </span>
+                                <div class="img-container">
+                                    <img class="avatar" src="{{ url('storage/avatars/'.$comment->user->pic) }}" alt="">
+                                </div>
                             </div>
-                        </div>
-                        <div class="comment-col">
-                            <div class="comment-details">
-                                @if (!($comment->updated_at))
-                                <span>Created at: </span>
-                                <a href="{{ '#comment-' . $loop->iteration }}">{{ $comStrdates[$loop->index][0] }}</a></div>
-                                @elseif ($comment->updated_at)
-                                <span>Created at: </span>
-                                <a href="{{ '#comment-' . $loop->iteration }}">{{ $comStrdates[$loop->index][0] }}</a>
-                                <span> - Last updated at: </span>
-                                <a href="{{ '#comment-' . $loop->iteration }}">{{ $comUpStrdates[$loop->index][0] }}</a></div>
-                                @endif
-                            <div class="comment-body">
-                                <div>{!! $comment->comment !!}</div>
+
+                            <div class="comment-col">
+                                <div class="comment-details">
+                                    @if (!($comment->updated_at))
+                                        <span>Created at: </span>
+                                        <a href="{{ '#comment-' . $loop->iteration }}">{{ $comStrdates[$loop->index][0] }}</a></div>
+                                    @elseif ($comment->updated_at)
+                                        <span>Created at: </span>
+                                        <a href="{{ '#comment-' . $loop->iteration }}">{{ $comStrdates[$loop->index][0] }}</a>
+                                        <span> - Last updated at: </span>
+                                        <a href="{{ '#comment-' . $loop->iteration }}">{{ $comUpStrdates[$loop->index][0] }}</a></div>
+                                    @endif
+                                <div class="comment-body">
+                                    <div>{!! $comment->comment !!}</div>
+                                </div>
                             </div>
+
+                            @can("messWith-comment", $comment)
+                                <div id="{{ 'comment-controls-' . $loop->iteration }}" class="comment-controls flex-v f-al-cent">
+                                    <form id="comment-edit" method="GET" action="{{ route('comments.edit', $comment->id) }}">
+                                        @csrf
+                                        <input type="hidden" name="comment-num" value="{{ 'comment-' . $loop->iteration }}"/>
+                                        <button class="com-edit-btn" type="submit">EDIT</button>
+                                    </form>
+                                    <form id="comment-del" method="POST" action="{{ route('comments.destroy', $comment->id) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="com-del-btn" type="submit">DELETE</button>
+                                    </form>
+                                </div>
+                            @endcan
                         </div>
-                        @can("messWith-comment", $comment)
-                        <div id="{{ 'comment-controls-' . $loop->iteration }}" class="comment-controls flex-v f-al-cent">
-                            <form id="comment-edit" method="GET" action="{{ route('comments.edit', $comment->id) }}">
-                                @csrf
-                                <input type="hidden" name="comment-num" value="{{ 'comment-' . $loop->iteration }}"/>
-                                <button class="com-edit-btn" type="submit">EDIT</button>
-                            </form>
-                            <form id="comment-del" method="POST" action="{{ route('comments.destroy', $comment->id) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button class="com-del-btn" type="submit">DELETE</button>
-                            </form>
-                        </div>
-                        @endcan
                     </div>
-                </div>
                 @endforeach
                 
             </div>
+            
             <form class="comment-box" method="POST" action="{{ route('comments.store') }}">
                 @csrf
                 <div class="flex-c">

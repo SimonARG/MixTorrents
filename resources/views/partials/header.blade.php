@@ -18,12 +18,13 @@
     
                     <input type="text" class="search-bar" name="search" placeholder="Search..." 
                     @if (request('search'))
-                    value="{{ request('search') }}"
+                        value="{{ request('search') }}"
                     @endif>
                     
                     <input class="search-btn" type="submit" value="🔎︎">
                 </div>
             </form>
+            
             <x-user />
             <x-flash />
 
