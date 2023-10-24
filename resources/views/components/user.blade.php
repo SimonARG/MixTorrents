@@ -12,9 +12,9 @@
         @auth
             <span>👤︎ Logged in as {{ Auth::user()->name }}</span>
             <hr>
-            <form method="GET" action="{{ route('uploads.search') }}">
-                <input type="hidden" name="field" value="user_id">
-                <input type="hidden" name="search" value="{{ Auth::user()->id }}">
+            <form method="GET" action="{{ route('user.uploads', Auth::user()->name) }}">
+                <input type="hidden" name="field" value="name">
+                <input type="hidden" name="search" value="{{ Auth::user()->name }}">
                 <button>🡹 Uploads</span></button>
             </form>
             <a href="{{ route('users.profile') }}">⛭ Profile</a>
