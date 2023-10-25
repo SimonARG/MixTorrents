@@ -47,7 +47,7 @@
                                 <div class="single-cat">Category:</div>
                             </div>
                             <div class="flex-v">
-                                <div class="single-cat-val single-val">{{ $upload->category->category }}</div>
+                                <div class="single-cat-val single-val">{{ $upload->category->category . " - " . $upload->subcat->subcat}}</div>
                             </div>
                         </div>
                         <div class="flex-v">

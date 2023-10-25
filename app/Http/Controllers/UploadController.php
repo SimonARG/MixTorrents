@@ -19,6 +19,18 @@ use Illuminate\Support\Facades\Storage;
 use GrahamCampbell\Markdown\Facades\Markdown;
 
 class UploadController extends Controller {
+
+    function formatBits($bits, $precision = 1) {
+        $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
+
+        $bits = max($bits, 0);
+        $pow = floor(($bits ? log($bits) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+
+        $bits /= (1 << (10 * $pow));
+
+        return round($bits, $precision) . $units[$pow];
+    }
     /**
      * Display a listing of the resource.
      */
@@ -110,19 +122,6 @@ class UploadController extends Controller {
             // Create magnet link
             $magnet = 'magnet:?xt=urn:btih:' . $infohash . '&dn=' . $filename . '&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce';
 
-            // Format total size
-            function formatBits($bits, $precision = 1) {
-                $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
-
-                $bits = max($bits, 0);
-                $pow = floor(($bits ? log($bits) : 0) / log(1024));
-                $pow = min($pow, count($units) - 1);
-
-                $bits /= (1 << (10 * $pow));
-
-                return round($bits, $precision) . $units[$pow];
-            }
-
             // Flatten tracker array
             $announces = [];
             foreach ($trackers as $key => $tracker) {
@@ -138,7 +137,7 @@ class UploadController extends Controller {
             $dbfields['path'] = $path;
             $dbfields['name'] = $name;
             $dbfields['comment'] = $comment;
-            $dbfields['size'] = formatBits($size);
+            $dbfields['size'] = $this->formatBits($size);
             $dbfields['seeders'] = $info[$infohash]['seeders'];
             $dbfields['leechers'] = $info[$infohash]['leechers'];
             $dbfields['downloads'] = $info[$infohash]['completed'];
@@ -199,19 +198,6 @@ class UploadController extends Controller {
         $fileList = $bcoder->filelist($torrent);
         $files = $fileList['files'];
 
-        // Format total size
-        function formatBits($bits, $precision = 1) {
-            $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
-
-            $bits = max($bits, 0);
-            $pow = floor(($bits ? log($bits) : 0) / log(1024));
-            $pow = min($pow, count($units) - 1);
-
-            $bits /= (1 << (10 * $pow));
-
-            return round($bits, $precision) . $units[$pow];
-        }
-
         // Make file list array
         $fileArray = [];
         foreach ($files as $file) {
@@ -223,7 +209,7 @@ class UploadController extends Controller {
                 $name = $file['name'];
                 $path = [];
             }
-            $temp = [['name' => $name, 'size' => formatBits($file['size'])]];
+            $temp = [['name' => $name, 'size' => $this->formatBits($file['size'])]];
             while (count($path) > 0) {
                 $temp2 = [];
                 $temp2['/' . last($path)] = $temp;
@@ -371,20 +357,6 @@ class UploadController extends Controller {
         // Create magnet link
         $magnet = 'magnet:?xt=urn:btih:' . $infohash . '&dn=' . $filename . '&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce';
 
-        // Format total size
-        function formatBits($bits, $precision = 1)
-        {
-            $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
-
-            $bits = max($bits, 0);
-            $pow = floor(($bits ? log($bits) : 0) / log(1024));
-            $pow = min($pow, count($units) - 1);
-
-            $bits /= (1 << (10 * $pow));
-
-            return round($bits, $precision) . $units[$pow];
-        }
-
         // Flatten tracker array
         $announces = [];
         foreach ($trackers as $key => $tracker) {
@@ -400,7 +372,7 @@ class UploadController extends Controller {
         $dbfields['path'] = $path;
         $dbfields['name'] = $name;
         $dbfields['comment'] = $comment;
-        $dbfields['size'] = formatBits($size);
+        $dbfields['size'] = $this->formatBits($size);
         $dbfields['seeders'] = $info[$infohash]['seeders'];
         $dbfields['leechers'] = $info[$infohash]['leechers'];
         $dbfields['downloads'] = $info[$infohash]['completed'];
