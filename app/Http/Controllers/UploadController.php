@@ -434,20 +434,21 @@ class UploadController extends Controller {
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
+    public function destroy(string $id) {
         Upload::destroy($id);
         return to_route('torrents.index')->with('message', 'Upload deleted');
     }
 
-    public function download(Upload $upload)
-    {
+    /**
+     * Download the resource.
+     */
+    public function download(Upload $upload) {
         $path = public_path('storage/' . $upload->path);
         return response()->download($path, $upload->filename);
     }
 
     /**
-     * Search for a resource
+     * Search for a resource.
      */
     public function search(Request $request){
         if ($request->category == 0) {

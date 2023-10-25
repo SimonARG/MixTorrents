@@ -589,7 +589,6 @@ footer {
     right: -160px;
     z-index: 99;
     box-shadow: 0 0 3px 2px rgb(10, 10, 10);
-    max-height: 70vh;
     overflow-y: scroll;
 }
 
@@ -1093,17 +1092,6 @@ thead>tr>th:nth-child(6) {
     resize: vertical;
 }
 
-.fillable {
-    outline: none;
-    font-size: .95rem;
-    padding: .4rem .6rem;
-    background-color: var(--bg-medium);
-    border: 2px solid var(--bg-brighter);
-    box-shadow: inset 0px 0px 3px 1px var(--bg-dark);
-    color: var(--text-bright);
-    margin-bottom: 1rem;
-}
-
 .comment:hover,
 .comment:focus {
     background-color: var(--bg-brighter);
@@ -1192,10 +1180,6 @@ thead>tr>th:nth-child(6) {
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
-}
-
-.info {
-    width: 48%;
 }
 
 .category-select {
@@ -1313,6 +1297,7 @@ option:checked {
 .auth-container span {
     font-size: .85rem;
     margin-bottom: .4rem;
+    text-align: center;
 }
 
 .auth-container form {
@@ -1321,11 +1306,6 @@ option:checked {
 
 .auth-container label {
     margin-bottom: .3rem;
-}
-
-.auth-container input[type=text],
-.auth-container input[type=password] {
-    width: 40%;
 }
 
 .auth-btn {
@@ -1568,7 +1548,6 @@ option:checked {
     position: relative;
     max-width: 200px;
     max-height: 200px;
-    margin-right: 4rem;
     margin-bottom: .4rem;
 }
 
@@ -1910,6 +1889,9 @@ option:checked {
     .hamburger {
         display: flex;
     }
+    .select-items {
+        max-height: 40svh;
+    }
     .user-drop {
         display: none;
     }
@@ -1955,6 +1937,28 @@ option:checked {
         left: -12.8rem;
         right: 0.7rem;
     }
+    .fields {
+        display: flex;
+        flex-direction: column;
+    }
+    .fields > .info {
+        width: 100%;
+    }
+    .user {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .user-controls {
+        margin-bottom: .7rem;
+    }
+    .user-info {
+        width: 100%;
+    }
+    .auth-container input[type=text],
+    .auth-container input[type=password] {
+        width: 100%;
+    }
 }
 
 @media only screen and (min-width: 600px) {
@@ -1994,6 +1998,9 @@ option:checked {
     }
     .hamburger {
         display: flex;
+    }
+    .select-items {
+        max-height: 40svh;
     }
     .user-drop {
         display: none;
@@ -2038,6 +2045,29 @@ option:checked {
         left: -12.8rem;
         right: 0.7rem;
     }
+    .fields {
+        display: flex;
+        flex-direction: row;
+    }
+    .fields > .info {
+        width: 48%;
+    }
+    .user {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .user-controls {
+        margin-bottom: .7rem;
+    }
+    .user-info {
+        width: 100%;
+    }
+    
+    .auth-container input[type=text],
+    .auth-container input[type=password] {
+        width: 85%;
+    }
 }
 
 @media only screen and (min-width: 768px) {
@@ -2077,6 +2107,9 @@ option:checked {
     }
     .hamburger {
         display: flex;
+    }
+    .select-items {
+        max-height: 70vh;
     }
     .user-drop {
         display: none;
@@ -2132,6 +2165,24 @@ option:checked {
         left: -12.8rem;
         right: 0.7rem;
     }
+    .profile-container .img-container {
+        margin-right: 4rem;
+    }
+    .user {
+        display: flex;
+        flex-direction: row;
+    }
+    .user-controls {
+        margin-bottom: 0;
+    }
+    .user-info {
+        width: auto;
+    }
+    
+    .auth-container input[type=text],
+    .auth-container input[type=password] {
+        width: 40%;
+    }
 }
 
 @media only screen and (min-width: 912px) {
@@ -2171,6 +2222,9 @@ option:checked {
     }
     .hamburger {
         display: flex;
+    }
+    .select-items {
+        max-height: 70vh;
     }
     .user-drop {
         display: block;
@@ -2280,6 +2334,9 @@ option:checked {
     .hamburger {
         display: none;
     }
+    .select-items {
+        max-height: 70vh;
+    }
     tbody {
         font-size: .95rem;
     }
@@ -2361,6 +2418,9 @@ option:checked {
     .hamburger {
         display: none;
     }
+    .select-items {
+        max-height: 70vh;
+    }
     tbody {
         font-size: .95rem;
     }
@@ -2441,6 +2501,9 @@ option:checked {
     }
     .hamburger {
         display: none;
+    }
+    .select-items {
+        max-height: 70vh;
     }
     tbody {
         font-size: .95rem;

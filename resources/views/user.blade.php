@@ -2,7 +2,7 @@
     <div class="content-container">
         <div class="content-panel profile-container">
             <h1 class="page-title">{{ $user->name }}'s profile</h1>
-            <div class="user flex-v">
+            <div class="user">
                 <div>
                     <div class="img-container">
                         <img src="{{ url('storage/avatars/' . $user->pic) }}" alt="Avatar">

@@ -25,7 +25,7 @@
                     </div>
                 </div>
 
-                <div class="flex-v f-just-bet">
+                <div class="fields f-just-bet">
 
                     <div class="info flex-c">
                         <label class="descriptor" for="name">Torrent display name (optional)</label>
@@ -51,7 +51,7 @@
                         @endif>
                     </div>
 
-                    <div class="info">
+                    <div class="info flex-c">
                         <label class="descriptor" for="category">Category</label>
                         <select id="category" name="category"
                         @if ($errors->first('category'))

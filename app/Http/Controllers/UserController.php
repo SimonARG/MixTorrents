@@ -208,7 +208,7 @@ class UserController extends Controller
     public function uploads(Request $request) {
         $user = User::where($request->field, $request->name)->first();
  
-        $uploads = $user->uploads()->paginate(20);
+        $uploads = $user->uploads()->latest()->paginate(20);
 
         $upStrdates = [];
         foreach ($uploads as $key => $upload) {
