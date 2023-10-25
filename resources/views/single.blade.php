@@ -28,7 +28,7 @@
                     <div class="single-controls flex-v">
                         <form id="up-edit" method="GET" action="{{ route('uploads.edit', $upload->id) }}">
                             @csrf
-                            <button class="del-btn" type="submit">EDIT</button>
+                            <button class="btn" type="submit">EDIT</button>
                         </form>
                         <form id="up-del" method="POST" action="{{ route('uploads.destroy', $upload) }}">
                             @csrf
