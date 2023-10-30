@@ -10,19 +10,16 @@ use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('uploads', function (Blueprint $table) {
             $table->id('id');
-            $table->string('filename');
-            $table->string('name');
             $table->string('title')->nullable();
-            $table->string('magnet', 500);
+            $table->string('name');
+            $table->string('filename');
             $table->string('path');
-            $table->dateTimeTz('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->string('magnet', 500);
+            $table->dateTimeTz('created_at');
             $table->dateTimeTz('updated_at')->nullable();
             $table->string('size');
             $table->string('seeders');
@@ -47,9 +44,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('uploads');

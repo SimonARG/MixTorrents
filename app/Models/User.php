@@ -14,7 +14,6 @@ class User extends Authenticatable
     use HasFactory;
     use SoftDeletes;
     
-    public $timestamps = false;
     protected $guarded = [];
 
     public function uploads(): HasMany 

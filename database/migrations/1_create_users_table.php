@@ -7,9 +7,6 @@ use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -18,18 +15,15 @@ return new class extends Migration
             $table->string('password');
             $table->string('email');
             $table->string('pic')->nullable();
-            $table->dateTimeTz('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->dateTimeTz('updated_at')->nullable();
-            $table->rememberToken();
             $table->text('about');
+            $table->dateTimeTz('created_at');
+            $table->dateTimeTz('updated_at')->nullable();
             $table->softDeletes();
-            $table->boolean('trust')->nullable()->default;
+            $table->rememberToken();
+            $table->boolean('trust')->nullable()->default(1);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
