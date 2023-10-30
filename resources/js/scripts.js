@@ -12,20 +12,21 @@ function buttonWarn(form, btn) {
     return;
 }
 
-function toggleDropdown(drop, btn, closest) {
+function toggleDropdown(drop, btn, el) {
     btn.addEventListener('click', function () {
         drop.classList.toggle("drop-show");
         btn.classList.toggle("user-btn--active");
     });
     
     window.addEventListener('click', function (event) {
-        if (!event.target.closest(closest)) {
+        if (!event.target.closest(el)) {
             if (drop.classList.contains('drop-show')) {
                 drop.classList.remove('drop-show');
                 btn.classList.remove('user-btn--active');
             }
         }
     });
+    return;
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -193,47 +194,6 @@ document.addEventListener("DOMContentLoaded", function () {
         uploadForm.addEventListener("submit", function () {
             submitBtn.style.display = 'none';
             loadingIcon.style.display = 'flex';
-        });
-    }
-
-    // Live convert description textarea content to Markdown and send it to preview window
-    if (document.querySelector(".description-tab")) {
-        const inputTab = document.querySelector(".input-tab");
-        const descriptionTab = document.querySelector(".description-tab");
-        const target = document.getElementById('description-preview');
-        const inputDiv = document.getElementById('description').parentElement;
-        const dislayDiv = target.parentElement;
-        const converter = new showdown.Converter();
-
-        converter.setFlavor('github');
-
-        inputTab.addEventListener('click', function () {
-            if (inputTab.classList.contains("tab-inactive")) {
-                inputTab.classList.remove("tab-inactive");
-                inputTab.classList.add("tab-active");
-                descriptionTab.classList.remove("tab-active");
-                descriptionTab.classList.add("tab-inactive");
-
-                dislayDiv.classList.remove("active");
-                inputDiv.classList.add("active");
-            }
-        });
-
-        descriptionTab.addEventListener('click', function () {
-            if (descriptionTab.classList.contains("tab-inactive")) {
-                inputTab.classList.remove("tab-active");
-                inputTab.classList.add("tab-inactive");
-                descriptionTab.classList.remove("tab-inactive");
-                descriptionTab.classList.add("tab-active");
-
-                dislayDiv.classList.add("active");
-                inputDiv.classList.remove("active");
-            }
-
-            const text = document.getElementById('description').value;
-            const html = converter.makeHtml(text);
-
-            target.innerHTML = html;
         });
     }
 
@@ -428,5 +388,46 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
     }
+
+        // Live convert description textarea content to Markdown and send it to preview window
+        if (document.querySelector(".description-tab")) {
+            const inputTab = document.querySelector(".input-tab");
+            const descriptionTab = document.querySelector(".description-tab");
+            const target = document.getElementById('description-preview');
+            const inputDiv = document.getElementById('description').parentElement;
+            const dislayDiv = target.parentElement;
+            const converter = new showdown.Converter();
+    
+            converter.setFlavor('github');
+    
+            inputTab.addEventListener('click', function () {
+                if (inputTab.classList.contains("tab-inactive")) {
+                    inputTab.classList.remove("tab-inactive");
+                    inputTab.classList.add("tab-active");
+                    descriptionTab.classList.remove("tab-active");
+                    descriptionTab.classList.add("tab-inactive");
+    
+                    dislayDiv.classList.remove("active");
+                    inputDiv.classList.add("active");
+                }
+            });
+    
+            descriptionTab.addEventListener('click', function () {
+                if (descriptionTab.classList.contains("tab-inactive")) {
+                    inputTab.classList.remove("tab-active");
+                    inputTab.classList.add("tab-inactive");
+                    descriptionTab.classList.remove("tab-inactive");
+                    descriptionTab.classList.add("tab-active");
+    
+                    dislayDiv.classList.add("active");
+                    inputDiv.classList.remove("active");
+                }
+    
+                const text = document.getElementById('description').value;
+                const html = converter.makeHtml(text);
+    
+                target.innerHTML = html;
+            });
+        }
 
 });

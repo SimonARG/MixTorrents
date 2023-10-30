@@ -5,8 +5,7 @@
                 echo "<li class=\"sub-folder inactive\"><a class=\"sub-folder-title\"><span class=\"file-icon\">🗀</span>".substr($key, 1)."</a><ul>";
                 displayFiles($fileArray[$key]);
                 echo "</ul></li>";
-            }
-            else {
+            } else {
                 echo "<li class=\"file inactive\"><span class=\"file-icon\">🗋</span>".$value['name']."<span class=\"file-size\">(".$value['size'].")</li>";
             }
         }

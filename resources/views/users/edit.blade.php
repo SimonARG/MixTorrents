@@ -88,7 +88,7 @@
                             </div>
 
                                 <label class="descriptor" for="avatar">Avatar</label>
-                                <div class="file-container">
+                                <div class="file-container flex-v">
                                     <label class="in-btn upload-btn" for="avatar">Browse...</label>
                                     <input type="text" readonly 
                                     @if ($errors->first('avatar'))
@@ -105,7 +105,7 @@
 
                     <hr>
                 
-                    <div class="flex-c-center">
+                    <div class="flex-c f-al-cent">
                         <label class="descriptor" for="password">Current password</h3></label>
                         <span class="subtitle">So we know it's you</span>
                         <input type="password" name="password" id="password" required

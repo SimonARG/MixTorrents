@@ -3,73 +3,35 @@
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DownloadController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
-// Home/index page
 Route::get('/', [UploadController::class, 'index'])->name('torrents.index');
 
-/*
-|--------------------------------------------------------------------------
-| Resource controller routing
-|--------------------------------------------------------------------------
-*/
+Route::resources([
+    'uploads' => UploadController::class,
+    'comments' => CommentController::class,
+    'users' => UserController::class
+]);
 
-Route::resource('uploads', UploadController::class);
+Route::controller(AuthController::class)->group(function () {
+    Route::get('login', 'login')->name('users.login');
+    Route::post('authenticate', 'authenticate')->name('users.authenticate');
+    Route::get('profile', 'profile')->name('users.profile');
+    Route::post('logout', 'logout')->name('users.logout');
+});
 
-Route::resource('comments', CommentController::class);
+Route::controller(SearchController::class)->group(function () {
+    Route::get('search', 'search')->name('uploads.search');
+    Route::get('user/{name}/uploads', 'uploads')->name('user.uploads');
+});
 
-Route::resource('users', UserController::class);
-
-/*
-|--------------------------------------------------------------------------
-| Simple view routing
-|--------------------------------------------------------------------------
-*/
+Route::get('/uploads/{upload}/download', DownloadController::class)->name('uploads.download');
 
 Route::view('help', 'help')->name('help');
 
 Route::view('about', 'about')->name('about');
 
 Route::view('rules', 'rules')->name('rules');
-
-/*
-|--------------------------------------------------------------------------
-| Special upload routing
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/uploads/{upload}/download', [UploadController::class, 'download'])->name('uploads.download');
-
-Route::get('search', [UploadController::class, 'search'])->name('uploads.search');
-
-/*
-|--------------------------------------------------------------------------
-| Special user routing
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/user/{user}/profile', [UserController::class, 'show'])->name('user.show');
-
-Route::get('profile', [UserController::class, 'profile'])->name('users.profile');
-
-Route::get('login', [UserController::class, 'login'])->name('users.login');
-
-Route::get('{name}/uploads', [UserController::class, 'uploads'])->name('user.uploads');
-
-Route::post('authenticate', [UserController::class, 'authenticate'])->name('users.authenticate');
-
-Route::post('logout', [UserController::class, 'logout'])->name('users.logout');
-
-/*
-|--------------------------------------------------------------------------
-| Special comment routing
-|--------------------------------------------------------------------------
-*/
-
-Route::patch('/update/{comment}', [CommentController::class, 'update'])->name('comments.update');

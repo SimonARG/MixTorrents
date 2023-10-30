@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\Rules\Password;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
     /**
      * Display a listing of the resource.
      */
@@ -161,65 +160,5 @@ class UserController extends Controller
 
         User::destroy($id);
         return to_route('torrents.index')->with('message', 'Your profile has been deleted');
-    }
-
-    public function login() {
-        session(['link' => url()->previous()]);
-        
-        return view('login');
-    }
-
-    public function authenticate(Request $request) {
-        $formFields = $request->validate([
-            'name' => ['required'],
-            'password' => ['required']
-        ]);
-
-        if (Auth::attempt($formFields)) {
-            $request->session()->regenerate();
-
-            return redirect(session('link'))->with('message', 'You are now logged in');
-        }
-
-        return back()->withErrors(['name' => 'Invalid credentials'])->onlyInput('name');
-    }
-
-    public function logout(Request $request) {
-        auth()->logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return back()->with('message', 'You are logged out!');
-    }
-
-    public function profile() {
-        if (Auth::check()) {
-            $date = new DateTime(auth()->user()->created_at);
-            $strdate = $date->format('Y/m/d H:i');
-            return view('profile', [
-                'strdate' => $strdate
-            ]);
-        } else {
-            return back()->with('message', 'You need to be logged in to view your profile');
-        }
-    }
-
-    public function uploads(Request $request) {
-        $user = User::where($request->field, $request->name)->first();
- 
-        $uploads = $user->uploads()->latest()->paginate(20);
-
-        $upStrdates = [];
-        foreach ($uploads as $key => $upload) {
-            $upDate = new DateTime($upload->created_at);
-            $upStrdate = $upDate->format('Y/m/d H:i');
-            $upStrdates[$key] = [$upStrdate];
-        }
-        
-        return view('users.uploads', [
-            'uploads' => $uploads,
-            'upStrdates' => $upStrdates
-        ]);
     }
 }

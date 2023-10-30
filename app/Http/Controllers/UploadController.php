@@ -7,14 +7,11 @@ require '../vendor/bhutanio/torrent-bencode/src/Bhutanio/BEncode/BEncode.php';
 
 use DateTime;
 use App\Models\User;
-use App\Models\Subcat;
 use App\Models\Upload;
-use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\File;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Storage;
 use GrahamCampbell\Markdown\Facades\Markdown;
 
@@ -34,8 +31,7 @@ class UploadController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index(Upload $upload)
-    {
+    public function index(Upload $upload) {
         $uploads = Upload::latest()->paginate(20);
 
         $upStrdates = [];
@@ -409,127 +405,5 @@ class UploadController extends Controller {
     public function destroy(string $id) {
         Upload::destroy($id);
         return to_route('torrents.index')->with('message', 'Upload deleted');
-    }
-
-    /**
-     * Download the resource.
-     */
-    public function download(Upload $upload) {
-        $path = public_path('storage/' . $upload->path);
-        return response()->download($path, $upload->filename);
-    }
-
-    /**
-     * Search for a resource.
-     */
-    public function search(Request $request){
-        if ($request->category == 0) {
-            if ($request->filter == 0) {
-                $uploads = Upload::whereExists(function (Builder $query) {
-                    $query->where('name', 'like', '%' . request('search') . '%')
-                    ->orWhere('title', 'like', '%' . request('search') . '%')
-                    ->orWhere('filename', 'like', '%' . request('search') . '%');
-                })
-                ->latest()
-                ->paginate(20);
-            } else if ($request->filter == 1) {
-                $uploads = Upload::whereRelation('user', 'trust', 1)
-                ->whereExists(function (Builder $query) {
-                    $query->where('name', 'like', '%' . request('search') . '%')
-                    ->orWhere('title', 'like', '%' . request('search') . '%')
-                    ->orWhere('filename', 'like', '%' . request('search') . '%');
-                })
-                ->latest()
-                ->paginate(20);
-            }
-        } else {
-            $categoriesString = $request->category;
-
-            if (strlen(trim($categoriesString)) > 1) {
-                $categories = explode("_", $request->category);
-
-                if ($request->filter == 0) {
-                    $uploads = Upload::whereExists(function (Builder $query) {
-                        $query->where('name', 'like', '%' . request('search') . '%')
-                            ->orWhere('title', 'like', '%' . request('search') . '%')
-                            ->orWhere('filename', 'like', '%' . request('search') . '%');
-                        })
-                        ->where('category_id', $categories[0])
-                        ->where('subcat_id', $categories[1])
-                        ->latest()
-                        ->paginate(20);
-
-                    $viewCat = Category::find($categories[0]);
-                    $viewSubcat = Subcat::find($categories[1]);
-                } else if ($request->filter == 1) {
-                    $uploads = Upload::whereRelation('user', 'trust', 1)
-                            ->whereExists(function (Builder $query) {
-                                $query->where('name', 'like', '%' . request('search') . '%')
-                                    ->orWhere('title', 'like', '%' . request('search') . '%')
-                                    ->orWhere('filename', 'like', '%' . request('search') . '%');
-                            })
-                            ->where('category_id', $categories[0])
-                            ->where('subcat_id', $categories[1])
-                            ->latest()
-                            ->paginate(20);
-
-                    $viewCat = Category::find($categories[0]);
-                    $viewSubcat = Subcat::find($categories[1]);
-                }
-            } else {
-                $category = $request->category;
-
-                if ($request->filter == 0) {
-                    $uploads = Upload::whereExists(function (Builder $query) {
-                                $query->where('name', 'like', '%' . request('search') . '%')
-                                    ->orWhere('title', 'like', '%' . request('search') . '%')
-                                    ->orWhere('filename', 'like', '%' . request('search') . '%');
-                            })
-                            ->where('category_id', $category[0])
-                            ->latest()
-                            ->paginate(20);
-
-                    $viewCat = Category::find($category);
-                } else if ($request->filter == 1) {
-                    $uploads = Upload::whereRelation('user', 'trust', 1)
-                    ->whereExists(function (Builder $query) {
-                        $query->where('name', 'like', '%' . request('search') . '%')
-                            ->orWhere('title', 'like', '%' . request('search') . '%')
-                            ->orWhere('filename', 'like', '%' . request('search') . '%');
-                    })
-                    ->where('category_id', $category[0])
-                    ->latest()
-                    ->paginate(20);
-
-                    $viewCat = Category::find($category);
-                }
-            }
-        }
-
-        $upStrdates = [];
-        foreach ($uploads as $key => $upload) {
-            $upDate = new DateTime($upload->created_at);
-            $upStrdate = $upDate->format('Y/m/d H:i');
-            $upStrdates[$key] = [$upStrdate];
-        }
-
-        if (isset($viewCat) && !(isset($viewSubcat))) {
-            $viewCats = $viewCat->category;
-        } else if (isset($viewCat) && isset($viewSubcat)) {
-            $viewCats = $viewCat->category . ' - ' . $viewSubcat->subcat;
-        }
-
-        if (isset($viewCats)) {
-            return view('results', [
-                'uploads' => $uploads,
-                'upStrdates' => $upStrdates,
-                'viewCats' => $viewCats
-            ]);
-        } else {
-            return view('results', [
-                'uploads' => $uploads,
-                'upStrdates' => $upStrdates
-            ]);
-        }
     }
 }

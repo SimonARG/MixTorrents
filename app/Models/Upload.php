@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Upload extends Model
-{
+class Upload extends Model {
     use HasFactory;
     public $timestamps = false;
     protected $guarded = [];

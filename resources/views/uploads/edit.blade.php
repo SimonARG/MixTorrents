@@ -22,7 +22,7 @@
                     </div>
                 </div>
 
-                <div class="info-container flex-v f-just-bet">
+                <div class="fields f-just-bet">
 
                     <div class="info flex-c">
                         <label class="descriptor" for="name">Torrent display name (optional)</label>
@@ -56,7 +56,7 @@
                         @endif>
                     </div>
 
-                    <div class="info">
+                    <div class="info flex-c">
                         <label class="descriptor" for="category">Category</label>
                         <select id="category" name="category"
                         @if ($errors->first('category'))
@@ -75,15 +75,15 @@
                         <label class="descriptor" for="subcat">Sub-category</label>
                         <select id="subcategory" name="subcat"
                         @if ($errors->first('subcat'))
-                        class="category-select select-error"
+                            class="category-select select-error"
                         @else
-                        class="category-select"
-                        value="{{ old('subcat') }}"
+                            class="category-select"
+                            value="{{ old('subcat') }}"
                         @endif>>
                             @if ($errors->first('subcat'))
-                            <option value="0">@error('subcat'){{ $message }}@enderror</option>
+                                <option value="0">@error('subcat'){{ $message }}@enderror</option>
                             @elseif (isset($upload->subcat_id))
-                            <option value={{ $upload->subcat_id }}>{{ $upload->subcat->subcat }}</option>
+                                <option value={{ $upload->subcat_id }}>{{ $upload->subcat->subcat }}</option>
                             @endif
                         </select>
                     </div>
@@ -111,16 +111,16 @@
                     <div class="tab-pane active">
                         <textarea id="description" name="description" 
                         @if ($errors->first('description'))
-                        class="fillable markdown-source ph-error"
-                        placeholder="@error('description'){{ $message }}@enderror"
+                            class="fillable markdown-source ph-error"
+                            placeholder="@error('description'){{ $message }}@enderror"
                         @else
-                        class="fillable markdown-source"
-                        placeholder="Upload description..."
+                            class="fillable markdown-source"
+                            placeholder="Upload description..."
                         @endif
                         @if (!(isset($upload->description)))
-                        >{{{ old('description') }}}</textarea>
+                            >{{{ old('description') }}}</textarea>
                         @elseif (isset($upload->description))
-                        >{{{ $upload->description }}}</textarea>
+                            >{{{ $upload->description }}}</textarea>
                         @endif
                     </div>
 
