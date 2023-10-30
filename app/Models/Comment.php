@@ -12,11 +12,13 @@ class Comment extends Model
     public $timestamps = false;
     protected $guarded = [];
 
-    public function upload(): BelongsTo {
+    public function upload(): BelongsTo
+    {
         return $this->belongsTo(Upload::class);
     }
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 }

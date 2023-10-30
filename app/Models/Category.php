@@ -11,7 +11,8 @@ class Category extends Model
     use HasFactory;
     public $timestamps = false;
 
-    public function upload(): HasMany {
+    public function upload(): HasMany
+    {
         return $this->hasMany(Upload::class);
     }
 }

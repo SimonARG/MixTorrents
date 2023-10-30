@@ -6,14 +6,16 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AuthController extends Controller {
-    public function login() {
+class AuthController extends Controller
+{
+    public function login()
+    {
         session(['link' => url()->previous()]);
-        
         return view('login');
     }
 
-    public function authenticate(Request $request) {
+    public function authenticate(Request $request)
+    {
         $formFields = $request->validate([
             'name' => ['required'],
             'password' => ['required']
@@ -28,7 +30,8 @@ class AuthController extends Controller {
         return back()->withErrors(['name' => 'Invalid credentials'])->onlyInput('name');
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         auth()->logout();
 
         $request->session()->invalidate();
@@ -37,7 +40,8 @@ class AuthController extends Controller {
         return back()->with('message', 'You are logged out!');
     }
 
-    public function profile() {
+    public function profile()
+    {
         if (Auth::check()) {
             $date = new DateTime(auth()->user()->created_at);
             $strdate = $date->format('Y/m/d H:i');

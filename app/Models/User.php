@@ -17,19 +17,23 @@ class User extends Authenticatable
     public $timestamps = false;
     protected $guarded = [];
 
-    public function uploads(): HasMany {
+    public function uploads(): HasMany 
+    {
         return $this->hasMany(Upload::class);
     }
 
-    public function comments(): HasMany {
+    public function comments(): HasMany 
+    {
         return $this->hasMany(Comment::class);
     }
 
-    public function roles(): BelongsToMany {
+    public function roles(): BelongsToMany 
+    {
         return $this->belongsToMany(Role::class);
     }
 
-    public function hasRole($role_name) {
+    public function hasRole($role_name) 
+    {
         foreach ($this->roles as $role) {
             if ($role->role == $role_name)
                 return true;
@@ -37,19 +41,21 @@ class User extends Authenticatable
         return false;
     }
 
-    public function getRole() {
+    public function getRole() 
+    {
         foreach ($this->roles as $role) {
             $role = $role->role;
             return $role;
         }
     }
 
-    public function getTrust() {
+    public function getTrust() 
+    {
         if ($this->trust === null) {
             return '';
-        } else if ($this->trust === 0) {
+        } elseif ($this->trust === 0) {
             return 'untrusted';
-        } else if ($this->trust === 1) {
+        } elseif ($this->trust === 1) {
             return 'trusted';
         }
     }

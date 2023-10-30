@@ -10,9 +10,10 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Database\Query\Builder;
 
-class SearchController extends Controller {
-
-    public function search(Request $request){
+class SearchController extends Controller
+{
+    public function search(Request $request)
+    {
         if ($request->category == 0) {
             if ($request->filter == 0) {
                 $uploads = Upload::whereExists(function (Builder $query) {
@@ -22,7 +23,7 @@ class SearchController extends Controller {
                 })
                 ->latest()
                 ->paginate(20);
-            } else if ($request->filter == 1) {
+            } elseif ($request->filter == 1) {
                 $uploads = Upload::whereRelation('user', 'trust', 1)
                 ->whereExists(function (Builder $query) {
                     $query->where('name', 'like', '%' . request('search') . '%')
@@ -51,7 +52,7 @@ class SearchController extends Controller {
 
                     $viewCat = Category::find($categories[0]);
                     $viewSubcat = Subcat::find($categories[1]);
-                } else if ($request->filter == 1) {
+                } elseif ($request->filter == 1) {
                     $uploads = Upload::whereRelation('user', 'trust', 1)
                             ->whereExists(function (Builder $query) {
                                 $query->where('name', 'like', '%' . request('search') . '%')
@@ -80,7 +81,7 @@ class SearchController extends Controller {
                             ->paginate(20);
 
                     $viewCat = Category::find($category);
-                } else if ($request->filter == 1) {
+                } elseif ($request->filter == 1) {
                     $uploads = Upload::whereRelation('user', 'trust', 1)
                     ->whereExists(function (Builder $query) {
                         $query->where('name', 'like', '%' . request('search') . '%')
@@ -105,7 +106,7 @@ class SearchController extends Controller {
 
         if (isset($viewCat) && !(isset($viewSubcat))) {
             $viewCats = $viewCat->category;
-        } else if (isset($viewCat) && isset($viewSubcat)) {
+        } elseif (isset($viewCat) && isset($viewSubcat)) {
             $viewCats = $viewCat->category . ' - ' . $viewSubcat->subcat;
         }
 
@@ -123,7 +124,8 @@ class SearchController extends Controller {
         }
     }
 
-    public function uploads(Request $request) {
+    public function uploads(Request $request)
+    {
         $user = User::where($request->field, $request->name)->first();
  
         $uploads = $user->uploads()->latest()->paginate(20);

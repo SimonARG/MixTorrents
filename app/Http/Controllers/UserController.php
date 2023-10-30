@@ -10,26 +10,16 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\Rules\Password;
 
-class UserController extends Controller {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index() {
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {
+class UserController extends Controller
+{
+    public function create()
+    {
         session(['link' => url()->previous()]);
-        
         return view('register');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $formFields = $request->validate([
             'name' => ['required', 'min:6', 'unique:users'],
             'email' => ['required', 'email', 'unique:users'],
@@ -51,7 +41,8 @@ class UserController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(User $user) {
+    public function show(User $user)
+    {
         $date = new DateTime($user->created_at);
         $strdate = $date->format('Y/m/d H:i');
 
@@ -61,27 +52,23 @@ class UserController extends Controller {
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id) {
+    public function edit(string $id)
+    {
         $user = User::find($id);
 
         if (Gate::allows('messWith-user', $user)) {
             return view('users.edit', [
                 'id' => $id
             ]);
-        } else if (! Auth::check()) {
+        } elseif (! Auth::check()) {
             return back()->with('message', 'You need to be logged in to edit your profile');
-        } else if (! Gate::allows('messWith-user', $user)) {
+        } elseif (! Gate::allows('messWith-user', $user)) {
             return back()->with('message', 'You can only edit your own profile');
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id) {
+    public function update(Request $request, string $id)
+    {
         $user = User::find($id);
 
         if (! Gate::allows('messWith-user', $user)) {
@@ -143,10 +130,8 @@ class UserController extends Controller {
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id) {
+    public function destroy(string $id)
+    {
         $user =  User::find($id);
 
         if (! Gate::allows('messWith-user', $user)) {

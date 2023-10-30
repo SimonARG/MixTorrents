@@ -15,9 +15,10 @@ use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
 use GrahamCampbell\Markdown\Facades\Markdown;
 
-class UploadController extends Controller {
-
-    function formatBits($bits, $precision = 1) {
+class UploadController extends Controller
+{
+    function formatBits($bits, $precision = 1)
+    {
         $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
 
         $bits = max($bits, 0);
@@ -28,10 +29,9 @@ class UploadController extends Controller {
 
         return round($bits, $precision) . $units[$pow];
     }
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Upload $upload) {
+
+    public function index(Upload $upload)
+    {
         $uploads = Upload::latest()->paginate(20);
 
         $upStrdates = [];
@@ -47,10 +47,8 @@ class UploadController extends Controller {
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {
+    public function create()
+    {
         if (! Auth::check()) {
             return back()->with('message', 'You need to be logged in to upload');
         }
@@ -59,16 +57,13 @@ class UploadController extends Controller {
 
         if (Gate::allows('new-upload', $user)) {
             return view('upload');
-        } else if (! Gate::allows('new-upload', $user)) {
+        } elseif (! Gate::allows('new-upload', $user)) {
             return back()->with('message', 'Your account is restricted');
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {
-
+    public function store(Request $request)
+    {
         if (Auth::check()) {
             // Create array to send to database
             $dbfields = [];
@@ -152,10 +147,8 @@ class UploadController extends Controller {
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Upload $upload) {
+    public function show(Upload $upload)
+    {
         // Check for description field in DB and convert it to Markdown if it exists
         if ($upload->description) {
             $upload->description = Markdown::convert($upload->description)->getContent();
@@ -266,10 +259,8 @@ class UploadController extends Controller {
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id) {
+    public function edit(string $id)
+    {
         $upload = Upload::find($id);
 
         if (! Gate::allows('messWith-upload', $upload)) {
@@ -286,10 +277,8 @@ class UploadController extends Controller {
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id) {
+    public function update(Request $request, string $id)
+    {
         $upload = Upload::find($id);
 
         if (! Gate::allows('messWith-upload', $upload)) {
@@ -399,10 +388,8 @@ class UploadController extends Controller {
         return redirect('uploads/' . $upload->id)->with('message', 'Torrent updated!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id) {
+    public function destroy(string $id)
+    {
         Upload::destroy($id);
         return to_route('torrents.index')->with('message', 'Upload deleted');
     }

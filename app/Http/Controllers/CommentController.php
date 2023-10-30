@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Redirect;
 
 class CommentController extends Controller
 {
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         if (Gate::allows('new-comment')) {
             $formFields = $request->validate([
                 'comment' => 'required',
@@ -25,14 +26,15 @@ class CommentController extends Controller
             Comment::create($formFields);
     
             return Redirect::to(URL::previous() . '#comment-' . $anchor)->with('message', 'Comment posted!');
-        } else if (! Auth::check()) {
+        } elseif (! Auth::check()) {
             return Redirect::to(URL::previous())->with('message', 'You need to be logged in to comment');
-        } else if (! Gate::allows('new-comment')) {
+        } elseif (! Gate::allows('new-comment')) {
             return Redirect::to(URL::previous())->with('message', 'Your account is restricted');
         }
     }
 
-    public function edit(Request $request, string $id) {
+    public function edit(Request $request, string $id)
+    {
         $comment = Comment::find($id);
 
         if (! Gate::allows('messWith-comment', $comment)) {
@@ -67,7 +69,8 @@ class CommentController extends Controller
         }
     }
 
-    public function destroy(string $id) {
+    public function destroy(string $id)
+    {
         $comment = Comment::find($id);
 
         if (! Gate::allows('messWith-comment', $comment)) {
@@ -79,7 +82,8 @@ class CommentController extends Controller
         return back()->with('message', 'Comment deleted');
     }
 
-    public function update(Request $request, string $id) {
+    public function update(Request $request, string $id)
+    {
         $formFields = $request->validate([
             'comment' => 'required',
         ]);
