@@ -124,4 +124,6 @@
             </form>
         </div>
     </div>
+
+    <script src="{{ url('../resources/js/user.edit.js') }}"></script>
 </x-layout>

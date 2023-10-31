@@ -213,4 +213,6 @@
             </form>
        </div>
     </div>
+
+    <script src="{{ url('../resources/js/single.js') }}"></script>
 </x-layout>

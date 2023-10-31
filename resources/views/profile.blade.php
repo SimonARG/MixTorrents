@@ -46,4 +46,6 @@
             <p>{{ Auth::user()->about }}</p>
         </div>
     </div>
+
+    <script src="{{ url('../resources/js/profile.js') }}"></script>
 </x-layout>

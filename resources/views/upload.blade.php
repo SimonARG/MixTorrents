@@ -130,4 +130,6 @@
 
         </div>
     </div>
+
+    <script src="{{ url('../resources/js/upload.js') }}"></script>
 </x-layout>
