@@ -1,6 +1,6 @@
 <x-layout>
     <div class="content-container">
-        <div class="content-panel about">
+        <div class="content-panel text-only">
             <h1 class="page-title">About <span class="red">Mix</span><span class="green">Torrents</span></h1>
 
             <p><span class="red">Mix</span><span class="green">Torrents</span> is a general purpose torrent aggregator built as a <span class="orange">Laravel</span> web application for my full-stack web developer portfolio, using vanilla <span class="orange">HTML</span>, <span class="orange">CSS</span> and <span class="orange">JavaScript</span> for the front-end, and allowing post descriptions and comments to be styled using <span class="orange">Markdown</span>. This type of website was chosen because of its need for a <span class="orange">complex relational database structure</span> for storing users, user uploads and comments, and all of the data related to those.</p>

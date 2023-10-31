@@ -1651,22 +1651,28 @@ option:checked {
 
 /*
 |------------------------------------------------------------
-| Rules
+| Rules, help & about
 |------------------------------------------------------------
 */
 
-.rules ol {
+.text-only ol {
     padding-left: 2rem;
     counter-reset: list;
 }
 
-.rules ol li {
+.text-only ol li {
     margin-bottom: 1.2rem;
     counter-increment: list;
 }
 
-.rules ol li::marker {
+.text-only ol li::marker {
     content: counter(list) ")\a0";
+}
+
+.text-only p {
+    margin-bottom: 1.8rem;
+    text-indent: 1.3rem;
+    line-height: 1.25;
 }
 
 /*

@@ -31,6 +31,20 @@ function toggleDropdown(drop, btn, el) {
 
 document.addEventListener("DOMContentLoaded", function () {
 
+    // Toggle the user menu dropdown and highlight the button
+    const userBtn = document.querySelector(".user-btn");
+    const userDrop = document.querySelector(".user-dropdown");
+    const target = document.querySelector(".user-drop");
+
+    toggleDropdown(userDrop, userBtn, target);
+
+    // Toggle the vertical user menu dropdown and highlight the button
+    const userBtnV = document.querySelector(".user-btn--v");
+    const userDropV = document.querySelector(".user-dropdown--v");
+    const targetV = document.querySelector(".user-drop--v");
+
+    toggleDropdown(userDropV, userBtnV, targetV);
+
     // Custom search select dropdowns
     let x, i, j, l, ll, selElmnt, a, b, c, span;
 
