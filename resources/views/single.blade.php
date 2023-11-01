@@ -46,7 +46,7 @@
                                 <div class="single-cat">Category:</div>
                             </div>
                             <div class="flex-v">
-                                <div class="single-cat-val single-val">{{ $upload->category->category . " - " . $upload->subcat->subcat}}</div>
+                                <div class="single-cat-val single-val"><a href="{{ "http://localhost/MixTorrents/public/search?filter=0&category=" . $upload->category->id . "_" . $upload->subcat->id . "&search=" }}">{{ $upload->category->category . " - " . $upload->subcat->subcat}}</a></div>
                             </div>
                         </div>
                         <div class="flex-v">

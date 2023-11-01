@@ -33,7 +33,9 @@
                                 <a href="{{ route('users.show', $upload->user) }}">{{ $upload->user->name }}</a>
                             </td>
                         @endauth
-                        <td class="col-category table-cat table-td--center">{{ $upload->category->category }}</td>
+                        <td class="col-category table-cat table-td--center">
+                            <a href="{{ "http://localhost/MixTorrents/public/search?filter=0&category=" . $upload->category->id . "&search=" }}">{{ $upload->category->category }}</a>
+                        </td>
                         <td class="col-title table-title  data-name">
                             <a href="{{ route('uploads.show', $upload->id) }}">{{ $upload->title ?? $upload->name ??  $upload->filename }}</a>
                         </td>
