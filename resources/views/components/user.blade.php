@@ -1,4 +1,4 @@
-<div class="user-drop">
+<div id="user-drop" class="user-drop">
     <button class="user-btn flex-v f-al-cent">
         <span class="user-icon">👤︎</span>
         @auth
