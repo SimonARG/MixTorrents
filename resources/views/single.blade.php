@@ -147,7 +147,11 @@
 
        <div class="single-panel panel--default" id="comments">
             <div class="panel-heading">
-                <a href="#">Comments ({{ $upload->comments->count() }})</a>
+                @if ($upload->comments->first())
+                    <a href="#comment-1">Comments ({{ $upload->comments->count() }})</a>
+                @else
+                Comments ({{ $upload->comments->count() }})
+                @endif
             </div>
 
             <div class="comments flex-c f-al-cent">
