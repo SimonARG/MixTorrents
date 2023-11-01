@@ -14,22 +14,10 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
 use GrahamCampbell\Markdown\Facades\Markdown;
+use App\Helpers\fileHelper;
 
 class UploadController extends Controller
 {
-    function formatBits($bits, $precision = 1)
-    {
-        $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
-
-        $bits = max($bits, 0);
-        $pow = floor(($bits ? log($bits) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-
-        $bits /= (1 << (10 * $pow));
-
-        return round($bits, $precision) . $units[$pow];
-    }
-
     public function index(Upload $upload)
     {
         $uploads = Upload::latest()->paginate(20);
@@ -128,7 +116,7 @@ class UploadController extends Controller
             $dbfields['path'] = $path;
             $dbfields['name'] = $name;
             $dbfields['comment'] = $comment;
-            $dbfields['size'] = $this->formatBits($size);
+            $dbfields['size'] = fileHelper::formatBits($size);
             $dbfields['seeders'] = $info[$infohash]['seeders'];
             $dbfields['leechers'] = $info[$infohash]['leechers'];
             $dbfields['downloads'] = $info[$infohash]['completed'];
@@ -198,7 +186,7 @@ class UploadController extends Controller
                 $name = $file['name'];
                 $path = [];
             }
-            $temp = [['name' => $name, 'size' => $this->formatBits($file['size'])]];
+            $temp = [['name' => $name, 'size' => fileHelper::formatBits($file["size"])]];
             while (count($path) > 0) {
                 $temp2 = [];
                 $temp2['/' . last($path)] = $temp;
@@ -357,7 +345,7 @@ class UploadController extends Controller
         $dbfields['path'] = $path;
         $dbfields['name'] = $name;
         $dbfields['comment'] = $comment;
-        $dbfields['size'] = $this->formatBits($size);
+        $dbfields['size'] = fileHelper::formatBits($size);
         $dbfields['seeders'] = $info[$infohash]['seeders'];
         $dbfields['leechers'] = $info[$infohash]['leechers'];
         $dbfields['downloads'] = $info[$infohash]['completed'];
