@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-require '../vendor/medariox/scrapeer/scraper.php';
 require '../vendor/bhutanio/torrent-bencode/src/Bhutanio/BEncode/BEncode.php';
+require '../vendor/medariox/scrapeer/scraper.php';
 
 use DateTime;
 use App\Models\User;
 use App\Models\Upload;
+use App\Helpers\fileHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
 use GrahamCampbell\Markdown\Facades\Markdown;
-use App\Helpers\fileHelper;
 
 class UploadController extends Controller
 {
@@ -73,13 +73,6 @@ class UploadController extends Controller
             $dbfields['title'] = $request['name'];
             $dbfields['info'] = $request['info'];
             $dbfields['description'] = $request['description'];
-
-            // Nullable validation
-            // $dbfields = $request->validate([
-            //     'name' => ['string', 'max:60', 'nullable'],
-            //     'info' => ['string', 'max:28', 'nullable'],
-            //     'description' => ['string', 'max:10000', 'nullable']
-            // ]);
 
             $filename =  $request->torrent_file->getClientOriginalName();
 

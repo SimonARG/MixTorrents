@@ -26,23 +26,23 @@ class AuthServiceProvider extends ServiceProvider {
             return $user->hasRole('admin') ? true : null;
         });
 
-        Gate::define('messWith-upload', function (User $user, Upload $upload) {
+        Gate::define('messWithUpload', function (User $user, Upload $upload) {
             return $user->id === $upload->user_id;
         });
 
-        Gate::define('messWith-comment', function (User $user, Comment $comment) {
+        Gate::define('messWithComment', function (User $user, Comment $comment) {
             return $user->id === $comment->user_id;
         });
 
-        Gate::define('messWith-user', function (User $user) {
+        Gate::define('messWithUser', function (User $user) {
             return auth()->user()->id === $user->id;
         });
 
-        Gate::define('new-upload', function (User $user) {
+        Gate::define('newUpload', function (User $user) {
             return ( !$user->hasRole('restricted'));
         });
 
-        Gate::define('new-comment', function (User $user) {
+        Gate::define('newComment', function (User $user) {
             return (! $user->hasRole('restricted'));
         });
     }

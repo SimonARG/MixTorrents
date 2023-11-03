@@ -31,6 +31,19 @@ function toggleDropdown(drop, btn, el) {
 
 document.addEventListener("DOMContentLoaded", function () {
 
+    // On page load, show and hide flash message
+    if (document.querySelector(".flash-holder")) {
+        const holder = document.querySelector(".flash-holder");
+        const holderText = document.querySelector(".flash-container").innerHTML;
+        holder.classList.add("flash-show");
+
+        if (holderText.includes("token") == true) {
+            setTimeout(function () { holder.remove("flash-show") }, 10000);
+        } else if (holderText.includes("token") == false) {
+            setTimeout(function () { holder.classList.remove("flash-show") }, 3000);
+        }
+    }
+
     // Toggle the user menu dropdown and highlight the button
     const userBtn = document.querySelector(".user-btn");
     const userDrop = document.querySelector(".user-dropdown");

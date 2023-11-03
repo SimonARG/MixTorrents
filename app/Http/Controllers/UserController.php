@@ -31,11 +31,15 @@ class UserController extends Controller
 
         $user = User::create($formFields);
 
+        $token = $user->createToken('AuthToken');
+
+        $tokenText = $token->plainTextToken;
+
         $user->roles()->attach(5);
 
         auth()->login($user);
 
-        return redirect(session('link'))->with('message', 'Registration succesful, you are now logged in!');
+        return redirect(session('link'))->with('message', 'Registration succesful, you are now logged in! Your token is: ' . $tokenText);
     }
 
     /**
