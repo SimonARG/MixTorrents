@@ -244,7 +244,7 @@ class UploadController extends Controller
     {
         $upload = Upload::find($id);
 
-        if (! Gate::allows('messWith-upload', $upload)) {
+        if (! Gate::allows('messWithUpload', $upload)) {
             abort(403);
         }
 
@@ -371,7 +371,12 @@ class UploadController extends Controller
 
     public function destroy(string $id)
     {
+        $upload = Upload::find($id);
+
         Upload::destroy($id);
+
+        Storage::delete('public/' . $upload['path']);
+
         return to_route('torrents.index')->with('message', 'Upload deleted');
     }
 }

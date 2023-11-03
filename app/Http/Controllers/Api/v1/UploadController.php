@@ -127,14 +127,133 @@ class UploadController extends ApiController
         // Create database entry
         $upload = Upload::create($dbfields);
 
-        return $this->successResponse('Upload created with id ' . $upload->id);
+        return $this->successResponse($upload, 'Upload created with ID = ' . $upload->id);
     }
 
     public function update(Request $request, string $id)
     {
+        $upload = Upload::find($id);
+
+        if (! Gate::allows('messWithUpload', $upload)) {
+            return $this->validationErrorResponse('Your account is restricted');
+        }
+
+        // Get the file
+        $upFile = Storage::get('public/' . $upload->path);
+
+        // Create array to send to database
+        $dbfields = [];
+
+        // Initialize torrent decoder and scraper
+        $bcoder = new BEncode;
+        $scraper = new Scraper;
+
+        // Essential validation
+        $request->validate([
+            'torrent_file' => [File::types(['torrent', 'txt', 'text', 'conf', 'def', 'list', 'log', 'in', 'octet-stream'])],
+            'category' => ['required', 'gt:0'],
+            'subcat' => ['required', 'gt:0'],
+            'name' => ['string', 'max:80', 'nullable'],
+            'info' => ['string', 'max:28', 'nullable'],
+            'description' => ['string', 'max:10000', 'nullable']
+        ]);
+
+        if (!($request['torrent_file'])) {
+            $request['torrent_file'] = $upFile;
+        }
+
+        $dbfields['title'] = $request['name'];
+        $dbfields['info'] = $request['info'];
+        $dbfields['description'] = $request['description'];
+
+        if ($upFile) {
+            $filename = $upload->filename;
+        } else {
+            $filename =  $request->torrent_file->getClientOriginalName();
+        }
+
+        // Store the file and get its path
+        
+        if ($upFile) {
+            $path = $upload->path;
+        } else {
+            $path = $request->torrent_file->store('torrents', 'public');
+        }
+
+        // Get the file
+        $file = Storage::get('public/' . $path);
+
+        // Decode torrent file, get hash, trackers, comment, name file list and size
+        $torrent = $bcoder->bdecode($file);
+        $trackers = $torrent['announce-list'];
+        $comment = $torrent['comment'];
+        $name = $torrent['info']['name'];
+        $infohash = sha1($bcoder->bencode($torrent["info"]));
+        $files = $bcoder->filelist($torrent);
+        $size = $files['total_size'];
+
+        // Create magnet link
+        $magnet = 'magnet:?xt=urn:btih:' . $infohash . '&dn=' . $filename . '&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce';
+
+        // Flatten tracker array
+        $announces = [];
+        foreach ($trackers as $key => $tracker) {
+            array_push($announces, $trackers[$key][0]);
+        };
+
+        // Scrape hash and tracker data
+        $info = $scraper->scrape($infohash, $announces);
+
+        // Fill database fields
+        $dbfields['magnet'] = $magnet;
+        $dbfields['filename'] = $filename;
+        $dbfields['path'] = $path;
+        $dbfields['name'] = $name;
+        $dbfields['comment'] = $comment;
+        $dbfields['size'] = fileHelper::formatBits($size);
+        $dbfields['seeders'] = $info[$infohash]['seeders'];
+        $dbfields['leechers'] = $info[$infohash]['leechers'];
+        $dbfields['downloads'] = $info[$infohash]['completed'];
+        $dbfields['hash'] = $infohash;
+        $dbfields['category_id'] = $request['category'];
+        $dbfields['subcat_id'] = $request['subcat'];
+
+        // Update database entry
+        $updated = $upload->update([
+            'magnet' => $dbfields['magnet'],
+            'filename' => $dbfields['filename'],
+            'path' => $dbfields['path'],
+            'name' => $dbfields['name'],
+            'comment' => $dbfields['comment'],
+            'size' => $dbfields['size'],
+            'seeders' => $dbfields['seeders'],
+            'leechers' => $dbfields['leechers'],
+            'downloads' => $dbfields['downloads'],
+            'hash' => $dbfields['hash'],
+            'category_id' => $dbfields['category_id'],
+            'subcat_id' => $dbfields['subcat_id'],
+            'title' => $dbfields['title'],
+            'info' => $dbfields['info'],
+            'description' => $dbfields['description']
+        ]);
+
+        return $this->successResponse($updated, 'Upload updated');
     }
 
     public function destroy(string $id)
     {
+        $user = User::find(Auth::user()->id);
+
+        $upload = Upload::find($id);
+
+        if (! Gate::allows('messWithUpload', $upload)) {
+            return $this->validationErrorResponse('Your account is restricted');
+        }
+
+        Upload::destroy($id);
+
+        Storage::delete('public/' . $upload['path']);
+
+        return $this->successResponse('', 'Upload with ID =  ' . $id . ' deleted');
     }
 }

@@ -23,7 +23,7 @@
         @endif
             <div class="panel-heading flex-v f-just-bet f-al-cent">
                 {{ $upload->title ?? $upload->name ?? $upload->filename }}
-                @can('messWith-upload', $upload)
+                @can('messWithUpload', $upload)
                     <div class="single-controls flex-v">
                         <form id="up-edit" method="GET" action="{{ route('uploads.edit', $upload->id) }}">
                             @csrf

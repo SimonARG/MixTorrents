@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\UploadController;
-use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\v1\UploadController;
+use App\Http\Controllers\Api\v1\UserController;
 
 Route::get('/', UserController::class)->name('/');
 
